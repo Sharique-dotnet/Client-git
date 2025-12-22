@@ -31,8 +31,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // If already authenticated, redirect to dashboard
-    if (this.authService.isAuthenticated) {
-      this.router.navigate(['/dashboard']);
+    if (this.authService.isAuthenticated() && !this.authService.isTokenExpired()) {
+      this.authService.redirectAfterLogin();
     }
   }
 
@@ -46,31 +46,22 @@ export class LoginComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const { username, password } = this.loginForm.value;
+    const { username, password, rememberMe } = this.loginForm.value;
 
-    this.authService.login({ username, password }).subscribe({
+    this.authService.login({ username, password, rememberMe }).subscribe({
       next: (response) => {
         console.log('Login successful, token received');
+        this.isLoading = false;
         
-        // Try to fetch user profile, but don't block login if it fails
-        this.authService.getUserProfile().subscribe({
-          next: (user) => {
-            console.log('User profile loaded:', user);
-          },
-          error: (err) => {
-            console.warn('Could not load user profile, continuing anyway:', err);
-            // Don't show error to user, just log it
-          }
-        });
-        
-        // Redirect to dashboard regardless of profile fetch result
-        this.router.navigate(['/dashboard']);
+        // User data is already extracted from JWT in auth service
+        // Redirect based on user role
+        this.authService.redirectAfterLogin();
       },
       error: (error) => {
         this.isLoading = false;
         console.error('Login error:', error);
         
-        // Handle different error responses
+        // Extract error_description from OAuth2 response
         if (error.error?.error_description) {
           this.errorMessage = error.error.error_description;
         } else if (error.error?.ErrorDescription) {
