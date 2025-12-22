@@ -1,0 +1,87 @@
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <div class="card">
+      <div class="row align-items-center text-center">
+        <div class="col-md-12">
+          <div class="card-body">
+            <img src="assets/images/logo-dark.png" alt="logo" class="img-fluid mb-4" />
+            <h4 class="mb-3 f-w-400">Sign In</h4>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <!-- Error Message -->
+              <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="feather icon-alert-circle"></i> {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+              </div>
+
+              <!-- Default Credentials Info -->
+              <div class="alert alert-info" role="alert">
+                <small><strong>Default Credentials:</strong><br>
+                  Username: <strong>admin</strong> | Password: <strong>admin123</strong></small>
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="feather icon-user"></i></span>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  placeholder="Username" 
+                  formControlName="username"
+                  [class.is-invalid]="username?.invalid && username?.touched"
+                  aria-label="Username" />
+              </div>
+              <div *ngIf="username?.invalid && username?.touched" class="text-danger text-start mb-2">
+                <small>Username is required</small>
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="feather icon-lock"></i></span>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  placeholder="Password" 
+                  formControlName="password"
+                  [class.is-invalid]="password?.invalid && password?.touched"
+                  aria-label="Password" />
+              </div>
+              <div *ngIf="password?.invalid && password?.touched" class="text-danger text-start mb-2">
+                <small>Password is required</small>
+              </div>
+
+              <div class="form-group text-start mt-2 mb-3">
+                <div class="form-check">
+                  <input 
+                    type="checkbox" 
+                    class="form-check-input" 
+                    formControlName="rememberMe" 
+                    id="checkbox-fill-a1" />
+                  <label class="form-check-label" for="checkbox-fill-a1">Remember me</label>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button 
+                  type="submit" 
+                  class="btn btn-block btn-primary mb-4"
+                  [disabled]="isLoading || loginForm.invalid">
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span *ngIf="!isLoading">Sign In</span>
+                  <span *ngIf="isLoading">Signing in...</span>
+                </button>
+              </div>
+            </form>
+
+            <p class="mb-2 text-muted">
+              Forgot password?
+              <a [routerLink]="['/auth/reset-password']" class="f-w-400 text-primary">Reset</a>
+            </p>
+            <p class="mb-0 text-muted">
+              Don't have an account?
+              <a [routerLink]="['/auth/register']" class="f-w-400 text-primary">Sign Up</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

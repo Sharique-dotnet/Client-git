@@ -1,0 +1,59 @@
+<div class="lock-screen-overlay">
+  <div class="lock-screen-container">
+    <div class="lock-screen-card">
+      <div class="lock-screen-header">
+        <img src="assets/images/logo-dark.png" alt="logo" class="img-fluid mb-3" style="max-width: 150px;" />
+        <div class="lock-icon mb-3">
+          <i class="feather icon-lock" style="font-size: 48px; color: #04a9f5;"></i>
+        </div>
+        <h4 class="mb-2">Screen Locked</h4>
+        <p class="text-muted mb-3">Your session is locked for security</p>
+      </div>
+
+      <div class="lock-screen-body">
+        <div class="user-info mb-4">
+          <img src="assets/images/user/avatar-1.jpg" class="img-radius mb-2" alt="User Profile" style="width: 80px; height: 80px;" />
+          <h5 class="mb-1">{{ username }}</h5>
+          <small class="text-muted">Locked at {{ lockedTime }}</small>
+        </div>
+
+        <form [formGroup]="lockForm" (ngSubmit)="onUnlock()">
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            <i class="feather icon-alert-circle me-2"></i>{{ errorMessage }}
+          </div>
+
+          <div class="mb-3">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="feather icon-lock"></i>
+              </span>
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Enter your password"
+                formControlName="password"
+                (keypress)="onKeyPress($event)"
+                autofocus
+              />
+            </div>
+            <small class="text-muted">Hint: admin123</small>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="feather icon-unlock me-2"></i>Unlock
+            </button>
+          </div>
+        </form>
+
+        <div class="text-center mt-3">
+          <small class="text-muted">
+            <i class="feather icon-info me-1"></i>
+            Your session data is preserved
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
