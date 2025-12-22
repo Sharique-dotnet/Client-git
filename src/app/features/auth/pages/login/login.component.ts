@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string = '';
   isLoading: boolean = false;
+  showPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -22,15 +23,15 @@ export class LoginComponent implements OnInit {
     private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });
   }
 
   ngOnInit(): void {
     // If already authenticated, redirect to dashboard
-    if (this.authService.isAuthenticated()) {
+    if (this.authService.isAuthenticated) {
       this.router.navigate(['/dashboard']);
     }
   }
@@ -39,26 +40,62 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
 
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields.';
+      this.markFormGroupTouched(this.loginForm);
+      this.errorMessage = 'Please fill in all required fields correctly.';
       return;
     }
 
     this.isLoading = true;
     const { username, password } = this.loginForm.value;
 
-    // Simulate a slight delay for better UX
-    setTimeout(() => {
-      if (this.authService.login(username, password)) {
-        console.log('Login successful, navigating to dashboard...');
-        this.router.navigate(['/dashboard']).then(
-          () => console.log('Navigation successful'),
-          (err) => console.error('Navigation error:', err)
-        );
-      } else {
-        this.errorMessage = 'Invalid username or password. Please use: admin / admin123';
+    this.authService.login({ username, password }).subscribe({
+      next: (response) => {
+        console.log('Login successful');
+        // Fetch user profile after successful login
+        this.authService.getUserProfile().subscribe({
+          next: (user) => {
+            console.log('User profile loaded:', user);
+            this.router.navigate(['/dashboard']);
+          },
+          error: (err) => {
+            console.error('Failed to load user profile:', err);
+            // Even if profile fails, redirect to dashboard
+            this.router.navigate(['/dashboard']);
+          }
+        });
+      },
+      error: (error) => {
         this.isLoading = false;
+        console.error('Login error:', error);
+        
+        if (error.error?.error_description) {
+          this.errorMessage = error.error.error_description;
+        } else if (error.error?.ErrorDescription) {
+          this.errorMessage = error.error.ErrorDescription;
+        } else if (error.status === 400) {
+          this.errorMessage = 'Invalid username or password. Please try again.';
+        } else if (error.status === 0) {
+          this.errorMessage = 'Unable to connect to server. Please check if the API is running.';
+        } else {
+          this.errorMessage = 'An error occurred during login. Please try again.';
+        }
       }
-    }, 300);
+    });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
+
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
   }
 
   get username() {
@@ -67,5 +104,9 @@ export class LoginComponent implements OnInit {
 
   get password() {
     return this.loginForm.get('password');
+  }
+
+  get rememberMe() {
+    return this.loginForm.get('rememberMe');
   }
 }
