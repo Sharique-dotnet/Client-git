@@ -6,6 +6,7 @@ export const environment = {
   tokenRefreshInterval: 60000, // 1 minute (token expires in 2 minutes)
   clientId: 'empower-angular-client',
   appName: 'Empower360Plus',
+  appVersion: '1.0.0',
   // Add retry configuration
   httpRetry: {
     count: 3,
