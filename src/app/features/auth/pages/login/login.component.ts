@@ -50,24 +50,27 @@ export class LoginComponent implements OnInit {
 
     this.authService.login({ username, password }).subscribe({
       next: (response) => {
-        console.log('Login successful');
-        // Fetch user profile after successful login
+        console.log('Login successful, token received');
+        
+        // Try to fetch user profile, but don't block login if it fails
         this.authService.getUserProfile().subscribe({
           next: (user) => {
             console.log('User profile loaded:', user);
-            this.router.navigate(['/dashboard']);
           },
           error: (err) => {
-            console.error('Failed to load user profile:', err);
-            // Even if profile fails, redirect to dashboard
-            this.router.navigate(['/dashboard']);
+            console.warn('Could not load user profile, continuing anyway:', err);
+            // Don't show error to user, just log it
           }
         });
+        
+        // Redirect to dashboard regardless of profile fetch result
+        this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         this.isLoading = false;
         console.error('Login error:', error);
         
+        // Handle different error responses
         if (error.error?.error_description) {
           this.errorMessage = error.error.error_description;
         } else if (error.error?.ErrorDescription) {
