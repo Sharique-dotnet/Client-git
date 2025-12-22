@@ -12,11 +12,33 @@ This Angular application is configured to consume the A4.Empower Web API with OA
 - API Endpoint: `https://localhost:5001/api`
 - Token Endpoint: `https://localhost:5001/connect/token`
 - Token Refresh Interval: 60 seconds (access token expires in 2 minutes)
+- App Version: `1.0.0`
 
 **Production (`environment.prod.ts`)**
 - API Base URL: `https://api.empower360plus.com`
 - API Endpoint: `https://api.empower360plus.com/api`
 - Token Endpoint: `https://api.empower360plus.com/connect/token`
+- App Version: `1.0.0`
+
+### Environment Configuration Properties
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'https://localhost:5001',
+  apiEndpoint: 'https://localhost:5001/api',
+  tokenEndpoint: 'https://localhost:5001/connect/token',
+  tokenRefreshInterval: 60000, // 1 minute
+  clientId: 'empower-angular-client',
+  appName: 'Empower360Plus',
+  appVersion: '1.0.0',
+  httpRetry: {
+    count: 3,
+    delay: 1000
+  },
+  httpTimeout: 30000 // 30 seconds
+};
+```
 
 ## Project Structure
 
@@ -228,8 +250,10 @@ Consider implementing NgRx or Akita for complex state management.
 ```bash
 cd Client-git
 npm install
-ng serve
+ng serve --port=4400
 ```
+
+The app will be available at: `http://localhost:4400`
 
 ### Test Authentication
 1. Navigate to login page
@@ -242,8 +266,9 @@ ng serve
 
 ### CORS Issues
 If you encounter CORS errors:
-- Verify API CORS configuration allows your Angular app origin
+- Verify API CORS configuration allows your Angular app origin (`http://localhost:4400`)
 - Check browser console for specific CORS error messages
+- Ensure API is running with HTTPS (`https://localhost:5001`)
 
 ### Token Issues
 - Check token expiration time (2 minutes)
@@ -254,6 +279,13 @@ If you encounter CORS errors:
 - Verify API is running and accessible
 - Check environment.ts has correct API URL
 - Verify SSL certificate is trusted (for HTTPS)
+- Check browser console for network errors
+
+### Compilation Errors
+If you see TypeScript compilation errors:
+- Ensure all environment properties are defined
+- Run `npm install` to install dependencies
+- Clear Angular cache: `ng cache clean`
 
 ## Security Considerations
 
@@ -283,3 +315,11 @@ If you encounter CORS errors:
 - `/api/blogs` - Blog posts
 
 For complete API documentation, visit: `https://localhost:5001/swagger`
+
+## Known Issues & Solutions
+
+### Issue: Missing appVersion in environment
+**Solution:** Added `appVersion: '1.0.0'` to both environment.ts and environment.prod.ts
+
+### Issue: SASS deprecation warnings
+**Status:** These are warnings from Bootstrap SASS files using deprecated syntax. They don't affect functionality but should be addressed in future updates by migrating to the new SASS module syntax.
