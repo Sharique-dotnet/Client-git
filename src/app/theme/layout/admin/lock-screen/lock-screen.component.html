@@ -20,9 +20,11 @@
 
         <form [formGroup]="lockForm" (ngSubmit)="onUnlock()">
           <!-- Error Message -->
-          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+          @if (errorMessage) {
+          <div class="alert alert-danger" role="alert">
             <i class="feather icon-alert-circle me-2"></i>{{ errorMessage }}
           </div>
+          }
 
           <div class="mb-3">
             <div class="input-group">
