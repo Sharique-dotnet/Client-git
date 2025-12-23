@@ -1,20 +1,120 @@
 <div class="row">
-  <div class="col-sm-12">
-    <app-card cardTitle="Welcome to Empower Client" [options]="false">
-      <h5>Dashboard Overview</h5>
-      <p>
-        This is your main dashboard. You can customize this page with widgets, charts, and other components
-        to display important information and metrics for your application.
-      </p>
-      <p class="text-muted">
-        The application is now structured with a clean architecture:
-      </p>
-      <ul>
-        <li><strong>Core:</strong> Services, Guards, Interceptors, Models</li>
-        <li><strong>Features:</strong> Business domains (Auth, Dashboard, etc.)</li>
-        <li><strong>Shared:</strong> Reusable UI components, Pipes, Directives</li>
-        <li><strong>Layouts:</strong> Main layout and Auth layout</li>
-      </ul>
+  <div class="col-md-12">
+    <div class="page-header">
+      <h3 class="mb-3">
+        {{ getGreeting() }}, {{ currentUser()?.fullName || 'User' }}!
+      </h3>
+      <p class="text-muted">Welcome to Empower360Plus Dashboard</p>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Leave Module Card -->
+  <div class="col-md-6 col-xl-6" *ngIf="isLeave">
+    <app-card cardTitle="Leave" [options]="false">
+      <div *ngIf="leaveTaskList?.length > 0; else noTasks" class="task-list">
+        <div class="task-item" *ngFor="let task of leaveTaskList">
+          <a [routerLink]="['../leave/manage-leaves']" [queryParams]="{ id: task.employeeId }">
+            {{ task.taskName }}
+          </a>
+        </div>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Timesheet Module Card -->
+  <div class="col-md-6 col-xl-6" *ngIf="isTimesheet">
+    <app-card cardTitle="Timesheet" [options]="false">
+      <div *ngIf="timesheetTaskList?.length > 0; else noTasks" class="task-list">
+        <div class="task-item" *ngFor="let task of timesheetTaskList">
+          <a
+            *ngIf="task.isManager"
+            [routerLink]="['../timesheet/manage-timesheet']"
+            [queryParams]="{ id: task.employeeId }"
+          >
+            {{ task.taskName }}
+          </a>
+          <a
+            *ngIf="!task.isManager"
+            [routerLink]="['../timesheet/my-timesheet']"
+            [queryParams]="{ id: task.employeeId }"
+          >
+            {{ task.taskName }}
+          </a>
+        </div>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Performance Module Card -->
+  <div class="col-md-6 col-xl-6" *ngIf="isPerformance">
+    <app-card cardTitle="Performance" [options]="false">
+      <div *ngIf="performanceTaskList?.length > 0; else noTasks" class="task-list">
+        <div class="task-item" *ngFor="let task of performanceTaskList">
+          <span>{{ task.taskName }}</span>
+        </div>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Recruitment Module Card -->
+  <div class="col-md-6 col-xl-6" *ngIf="isRecruitment">
+    <app-card cardTitle="Recruitment" [options]="false">
+      <div *ngIf="recruitmentTaskList?.length > 0; else noTasks" class="task-list">
+        <div class="task-item" *ngFor="let task of recruitmentTaskList">
+          <span>{{ task.taskName }}</span>
+        </div>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Expense Management Module Card -->
+  <div class="col-md-6 col-xl-6" *ngIf="isExpenseManagement">
+    <app-card cardTitle="Expense Management" [options]="false">
+      <div class="task-list">
+        <p class="text-muted">Expense management features coming soon...</p>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Sales & Marketing Module Card -->
+  <div class="col-md-6 col-xl-6" *ngIf="isSalesMarketing">
+    <app-card cardTitle="Sales & Marketing" [options]="false">
+      <div class="task-list">
+        <p class="text-muted">Sales & Marketing features coming soon...</p>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- No Modules Message -->
+  <div
+    class="col-md-12"
+    *ngIf="!isLeave && !isTimesheet && !isPerformance && !isRecruitment && !isExpenseManagement && !isSalesMarketing"
+  >
+    <app-card cardTitle="Dashboard" [options]="false">
+      <div class="text-center py-5">
+        <i class="feather icon-inbox" style="font-size: 48px; color: #ccc"></i>
+        <h5 class="mt-3">No modules available</h5>
+        <p class="text-muted">Please contact your administrator to enable modules for your account.</p>
+      </div>
     </app-card>
   </div>
 </div>
+
+<!-- Loading Indicator -->
+<div *ngIf="loadingIndicator" class="row">
+  <div class="col-md-12 text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading dashboard...</p>
+  </div>
+</div>
+
+<!-- No Tasks Template -->
+<ng-template #noTasks>
+  <div class="task-list">
+    <p class="text-muted">There are no pending tasks</p>
+  </div>
+</ng-template>
