@@ -227,12 +227,20 @@ export class AuthService {
 
   /**
    * Logout and clear all authentication data
+   * Pattern from Angular 4 ClientApp AuthService
    */
   logout(): void {
     this.stopTokenRefresh();
     this.storageService.clearAuthData();
     this.clearAuthState();
-    this.router.navigate(['/login']);
+  }
+
+  /**
+   * Redirect user to login page after logout
+   * Pattern from Angular 4 ClientApp AuthService
+   */
+  redirectLogoutUser(): void {
+    this.router.navigate(['/auth/login']);
   }
 
   /**
@@ -252,7 +260,7 @@ export class AuthService {
     const user = this.currentUserSignal();
     
     if (!user) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
       return;
     }
 
