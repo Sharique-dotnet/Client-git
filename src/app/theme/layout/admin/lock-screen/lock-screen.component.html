@@ -12,7 +12,8 @@
 
       <div class="lock-screen-body">
         <div class="user-info mb-4">
-          <img src="assets/images/user/avatar-1.jpg" class="img-radius mb-2" alt="User Profile" style="width: 80px; height: 80px;" />
+          <img src="assets/images/user/avatar-1.jpg" class="img-radius mb-2" alt="User Profile"
+            style="width: 80px; height: 80px;" />
           <h5 class="mb-1">{{ username }}</h5>
           <small class="text-muted">Locked at {{ lockedTime }}</small>
         </div>
@@ -28,16 +29,10 @@
               <span class="input-group-text">
                 <i class="feather icon-lock"></i>
               </span>
-              <input
-                type="password"
-                class="form-control"
-                placeholder="Enter your password"
-                formControlName="password"
-                (keypress)="onKeyPress($event)"
-                autofocus
-              />
+              <input type="password" class="form-control" placeholder="Enter your password" formControlName="password"
+                (keypress)="onKeyPress($event)" autofocus />
             </div>
-            <small class="text-muted">Hint: admin123</small>
+            <!-- <small class="text-muted">Hint: admin123</small> -->
           </div>
 
           <div class="d-grid gap-2">
