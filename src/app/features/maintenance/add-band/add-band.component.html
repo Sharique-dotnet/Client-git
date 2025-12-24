@@ -1,0 +1,65 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Add New Band</h3>
+      <button class="close-btn" (click)="onClose()" type="button">
+        <i class="feather icon-x"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      @if(error){
+      <div class="alert alert-error">
+        <i class="feather icon-alert-circle"></i>
+        <span>{{ error }}</span>
+      </div>
+      }
+
+      @if(successMessage){
+      <div class="alert alert-success">
+        <i class="feather icon-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      }
+
+      <form (ngSubmit)="onSubmit()" #bandForm="ngForm">
+        <div class="form-group">
+          <label for="bandName">Band Name <span class="required">*</span></label>
+          <input
+            type="text"
+            id="bandName"
+            name="bandName"
+            [(ngModel)]="bandName"
+            placeholder="Enter band name"
+            required
+            [disabled]="loading"
+            class="form-control"
+          />
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onClose()"
+            [disabled]="loading"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="loading || !bandName.trim()"
+          >
+            @if(loading){
+            <span class="spinner-small"></span>
+            Adding...
+            } @else {
+            Add Band
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

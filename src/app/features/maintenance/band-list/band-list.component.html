@@ -1,6 +1,10 @@
 <div class="band-list-container">
   <div class="header">
     <h2>Band List</h2>
+    <button class="btn btn-add" (click)="openAddBandModal()">
+      <i class="feather icon-plus"></i>
+      Add Band
+    </button>
   </div>
 
   @if(loading){
@@ -45,3 +49,10 @@
   </div>
   }
 </div>
+
+@if(showAddBandModal){
+<app-add-band
+  (close)="closeAddBandModal()"
+  (bandAdded)="onBandAdded()"
+></app-add-band>
+}
