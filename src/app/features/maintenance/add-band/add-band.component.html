@@ -1,7 +1,7 @@
 <div class="modal-overlay" (click)="onClose()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Add New Band</h3>
+      <h3>{{ isEditMode ? 'Edit Band' : 'Add New Band' }}</h3>
       <button class="close-btn" (click)="onClose()" type="button">
         <i class="feather icon-x"></i>
       </button>
@@ -53,9 +53,9 @@
           >
             @if(loading){
             <span class="spinner-small"></span>
-            Adding...
+            {{ isEditMode ? 'Updating...' : 'Adding...' }}
             } @else {
-            Add Band
+            {{ isEditMode ? 'Update Band' : 'Add Band' }}
             }
           </button>
         </div>

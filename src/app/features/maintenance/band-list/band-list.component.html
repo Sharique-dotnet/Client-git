@@ -29,6 +29,7 @@
           <tr>
             <th>#</th>
             <th>Name</th>
+            <th class="actions-column">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -36,6 +37,22 @@
           <tr>
             <td>{{ currentPage * pageSize + i + 1 }}</td>
             <td>{{ band.name }}</td>
+            <td class="actions-cell">
+              <button 
+                class="action-btn edit-btn" 
+                (click)="openEditBandModal(band)"
+                title="Edit band"
+              >
+                <i class="feather icon-edit"></i>
+              </button>
+              <button 
+                class="action-btn delete-btn" 
+                (click)="deleteBand(band)"
+                title="Delete band"
+              >
+                <i class="feather icon-trash-2"></i>
+              </button>
+            </td>
           </tr>
           }
         </tbody>
@@ -62,9 +79,11 @@
   }
 </div>
 
-@if(showAddBandModal){
+@if(showBandModal){
 <app-add-band
-  (close)="closeAddBandModal()"
+  [band]="selectedBand"
+  (close)="closeBandModal()"
   (bandAdded)="onBandAdded()"
+  (bandUpdated)="onBandUpdated()"
 ></app-add-band>
 }

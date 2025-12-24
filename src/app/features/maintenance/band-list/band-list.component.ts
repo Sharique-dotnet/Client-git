@@ -16,7 +16,8 @@ export class BandListComponent implements OnInit {
   bands: Band[] = [];
   loading: boolean = false;
   error: string = '';
-  showAddBandModal: boolean = false;
+  showBandModal: boolean = false;
+  selectedBand: Band | null = null;
   
   // Pagination properties (0-based indexing)
   currentPage: number = 0;
@@ -54,15 +55,47 @@ export class BandListComponent implements OnInit {
   }
 
   openAddBandModal(): void {
-    this.showAddBandModal = true;
+    this.selectedBand = null;
+    this.showBandModal = true;
   }
 
-  closeAddBandModal(): void {
-    this.showAddBandModal = false;
+  openEditBandModal(band: Band): void {
+    this.selectedBand = { ...band }; // Create a copy to avoid direct mutation
+    this.showBandModal = true;
+  }
+
+  closeBandModal(): void {
+    this.showBandModal = false;
+    this.selectedBand = null;
   }
 
   onBandAdded(): void {
     this.currentPage = 0; // Reset to first page (0) after adding
-    this.loadBands(); // Reload the band list after adding a new band
+    this.loadBands();
+  }
+
+  onBandUpdated(): void {
+    this.loadBands(); // Reload current page after updating
+  }
+
+  deleteBand(band: Band): void {
+    if (confirm(`Are you sure you want to delete "${band.name}"?`)) {
+      this.bandService.deleteBand(band.id).subscribe({
+        next: () => {
+          // If current page becomes empty and it's not the first page, go to previous page
+          if (this.bands.length === 1 && this.currentPage > 0) {
+            this.currentPage--;
+          }
+          this.loadBands();
+        },
+        error: (err) => {
+          this.error = 'Failed to delete band';
+          console.error('Error deleting band:', err);
+          setTimeout(() => {
+            this.error = '';
+          }, 3000);
+        }
+      });
+    }
   }
 }
