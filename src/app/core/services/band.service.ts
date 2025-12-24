@@ -1,18 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-
-export interface Band {
-  id: string;
-  name: string;
-}
-
-export interface BandViewModel {
-  bandModel: Band[];
-  totalCount: number;
-}
+import { Band, BandViewModel } from '../models/band.model';
 
 @Injectable({
   providedIn: 'root'
