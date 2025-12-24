@@ -20,13 +20,13 @@ export interface BandViewModel {
 export class BandService {
   private apiUrl = `${environment.apiEndpoint}/Band`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getBands(page?: number, pageSize?: number, name?: string): Observable<Band[]> {
-    const pageNum = page || 1;
-    const size = pageSize || 100;
+    const pageNum = page || 0;
+    const size = pageSize || 10;
     const searchName = name || '';
-    
+
     return this.http.get<BandViewModel>(`${this.apiUrl}/bandList/${pageNum}/${size}/${searchName}`)
       .pipe(
         map(response => response.bandModel || [])
