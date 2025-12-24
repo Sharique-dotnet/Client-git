@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BandService, Band } from '../../../core/services/band.service';
+import { BandService } from '../../../core/services/band.service';
+import { Band } from 'src/app/core/models/band.model';
 
 @Component({
   selector: 'app-band-list',
@@ -14,7 +15,7 @@ export class BandListComponent implements OnInit {
   loading: boolean = false;
   error: string = '';
 
-  constructor(private bandService: BandService) {}
+  constructor(private bandService: BandService) { }
 
   ngOnInit(): void {
     this.loadBands();
