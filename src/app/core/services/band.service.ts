@@ -1,41 +1,51 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface Band {
-  id: number;
+  id: string;
   name: string;
-  description?: string;
-  createdDate?: Date;
-  modifiedDate?: Date;
+}
+
+export interface BandViewModel {
+  bandModel: Band[];
+  totalCount: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class BandService {
-  private apiUrl = `${environment.apiEndpoint}/bands`;
+  private apiUrl = `${environment.apiEndpoint}/Band`;
 
   constructor(private http: HttpClient) {}
 
-  getBands(): Observable<Band[]> {
-    return this.http.get<Band[]>(this.apiUrl);
+  getBands(page?: number, pageSize?: number, name?: string): Observable<Band[]> {
+    const pageNum = page || 1;
+    const size = pageSize || 100;
+    const searchName = name || '';
+    
+    return this.http.get<BandViewModel>(`${this.apiUrl}/bandList/${pageNum}/${size}/${searchName}`)
+      .pipe(
+        map(response => response.bandModel || [])
+      );
   }
 
-  getBandById(id: number): Observable<Band> {
-    return this.http.get<Band>(`${this.apiUrl}/${id}`);
+  getBandById(id: string): Observable<Band> {
+    return this.http.get<Band>(`${this.apiUrl}/band/${id}`);
   }
 
-  createBand(band: Band): Observable<Band> {
-    return this.http.post<Band>(this.apiUrl, band);
+  createBand(band: Band): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/create`, band);
   }
 
-  updateBand(id: number, band: Band): Observable<Band> {
-    return this.http.put<Band>(`${this.apiUrl}/${id}`, band);
+  updateBand(id: string, band: Band): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/update/${id}`, band);
   }
 
-  deleteBand(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteBand(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
 }
