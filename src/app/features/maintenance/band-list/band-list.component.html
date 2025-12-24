@@ -1,0 +1,43 @@
+<div class="band-list-container">
+  <div class="header">
+    <h2>Band List</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading bands...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <i class="feather icon-alert-circle"></i>
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="band-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Created Date</th>
+          <th>Modified Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let band of bands">
+          <td>{{ band.id }}</td>
+          <td>{{ band.name }}</td>
+          <td>{{ band.description || '-' }}</td>
+          <td>{{ band.createdDate | date:'short' }}</td>
+          <td>{{ band.modifiedDate | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="bands.length === 0" class="no-data">
+      <i class="feather icon-inbox"></i>
+      <p>No bands found</p>
+    </div>
+  </div>
+</div>
