@@ -16,7 +16,7 @@ export interface PageChangeEvent {
 })
 export class PaginationComponent implements OnChanges {
   @Input() totalItems: number = 0;
-  @Input() currentPage: number = 1;
+  @Input() currentPage: number = 0; // 0-based indexing
   @Input() pageSize: number = 10;
   @Input() pageSizeOptions: number[] = [5, 10, 25, 100];
   
@@ -41,20 +41,20 @@ export class PaginationComponent implements OnChanges {
     const maxPagesToShow = 5;
     
     if (this.totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= this.totalPages; i++) {
+      for (let i = 0; i < this.totalPages; i++) {
         pages.push(i);
       }
     } else {
       const leftOffset = Math.floor(maxPagesToShow / 2);
       const rightOffset = maxPagesToShow - leftOffset - 1;
       
-      let start = Math.max(1, this.currentPage - leftOffset);
-      let end = Math.min(this.totalPages, this.currentPage + rightOffset);
+      let start = Math.max(0, this.currentPage - leftOffset);
+      let end = Math.min(this.totalPages - 1, this.currentPage + rightOffset);
       
       if (this.currentPage <= leftOffset) {
-        end = maxPagesToShow;
-      } else if (this.currentPage >= this.totalPages - rightOffset) {
-        start = this.totalPages - maxPagesToShow + 1;
+        end = maxPagesToShow - 1;
+      } else if (this.currentPage >= this.totalPages - 1 - rightOffset) {
+        start = this.totalPages - maxPagesToShow;
       }
       
       for (let i = start; i <= end; i++) {
@@ -66,7 +66,7 @@ export class PaginationComponent implements OnChanges {
   }
 
   onPageChange(page: number): void {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+    if (page >= 0 && page < this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
       this.emitPageChange();
     }
@@ -74,7 +74,7 @@ export class PaginationComponent implements OnChanges {
 
   onPageSizeChange(newSize: number): void {
     this.pageSize = newSize;
-    this.currentPage = 1; // Reset to first page when page size changes
+    this.currentPage = 0; // Reset to first page (0) when page size changes
     this.calculatePages();
     this.emitPageChange();
   }
@@ -87,7 +87,7 @@ export class PaginationComponent implements OnChanges {
   }
 
   goToFirstPage(): void {
-    this.onPageChange(1);
+    this.onPageChange(0);
   }
 
   goToPreviousPage(): void {
@@ -99,14 +99,19 @@ export class PaginationComponent implements OnChanges {
   }
 
   goToLastPage(): void {
-    this.onPageChange(this.totalPages);
+    this.onPageChange(this.totalPages - 1);
   }
 
   get startItem(): number {
-    return this.totalItems === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+    return this.totalItems === 0 ? 0 : this.currentPage * this.pageSize + 1;
   }
 
   get endItem(): number {
-    return Math.min(this.currentPage * this.pageSize, this.totalItems);
+    return Math.min((this.currentPage + 1) * this.pageSize, this.totalItems);
+  }
+
+  // Display page number (1-based for UI)
+  getDisplayPageNumber(page: number): number {
+    return page + 1;
   }
 }

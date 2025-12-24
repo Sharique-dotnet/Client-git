@@ -12,12 +12,8 @@ export class BandService {
 
   constructor(private http: HttpClient) { }
 
-  getBands(page?: number, pageSize?: number, name?: string): Observable<BandViewModel> {
-    const pageNum = page || 1;
-    const size = pageSize || 10;
-    const searchName = name || '';
-
-    return this.http.get<BandViewModel>(`${this.apiUrl}/bandList/${pageNum}/${size}/${searchName}`);
+  getBands(page: number = 0, pageSize: number = 10, name: string = ''): Observable<BandViewModel> {
+    return this.http.get<BandViewModel>(`${this.apiUrl}/bandList/${page}/${pageSize}/${name}`);
   }
 
   getBandById(id: string): Observable<Band> {

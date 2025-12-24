@@ -18,8 +18,8 @@ export class BandListComponent implements OnInit {
   error: string = '';
   showAddBandModal: boolean = false;
   
-  // Pagination properties
-  currentPage: number = 1;
+  // Pagination properties (0-based indexing)
+  currentPage: number = 0;
   pageSize: number = 10;
   totalItems: number = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
@@ -62,7 +62,7 @@ export class BandListComponent implements OnInit {
   }
 
   onBandAdded(): void {
-    this.currentPage = 1; // Reset to first page after adding
+    this.currentPage = 0; // Reset to first page (0) after adding
     this.loadBands(); // Reload the band list after adding a new band
   }
 }

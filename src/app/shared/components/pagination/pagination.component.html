@@ -24,7 +24,7 @@
     <button 
       class="pagination-btn" 
       (click)="goToFirstPage()" 
-      [disabled]="currentPage === 1"
+      [disabled]="currentPage === 0"
       title="First page"
     >
       <i class="feather icon-chevrons-left"></i>
@@ -33,14 +33,14 @@
     <button 
       class="pagination-btn" 
       (click)="goToPreviousPage()" 
-      [disabled]="currentPage === 1"
+      [disabled]="currentPage === 0"
       title="Previous page"
     >
       <i class="feather icon-chevron-left"></i>
     </button>
 
     <div class="page-numbers">
-      @if(pages[0] > 1){
+      @if(pages[0] > 0){
         <span class="ellipsis">...</span>
       }
       
@@ -50,11 +50,11 @@
           [class.active]="page === currentPage"
           (click)="onPageChange(page)"
         >
-          {{ page }}
+          {{ getDisplayPageNumber(page) }}
         </button>
       }
       
-      @if(pages[pages.length - 1] < totalPages){
+      @if(pages[pages.length - 1] < totalPages - 1){
         <span class="ellipsis">...</span>
       }
     </div>
@@ -62,7 +62,7 @@
     <button 
       class="pagination-btn" 
       (click)="goToNextPage()" 
-      [disabled]="currentPage === totalPages"
+      [disabled]="currentPage === totalPages - 1"
       title="Next page"
     >
       <i class="feather icon-chevron-right"></i>
@@ -71,7 +71,7 @@
     <button 
       class="pagination-btn" 
       (click)="goToLastPage()" 
-      [disabled]="currentPage === totalPages"
+      [disabled]="currentPage === totalPages - 1"
       title="Last page"
     >
       <i class="feather icon-chevrons-right"></i>
