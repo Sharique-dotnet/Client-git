@@ -36,6 +36,10 @@ export const routes: Routes = [
         path: 'dashboard',
         loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES)
       },
+      {
+        path: 'maintenance',
+        loadChildren: () => import('./features/maintenance/maintenance.routes').then(m => m.MAINTENANCE_ROUTES)
+      }
       // Add more feature routes here
     ]
   },
