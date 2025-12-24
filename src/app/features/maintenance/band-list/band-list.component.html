@@ -22,29 +22,41 @@
   }
 
   @if(!loading && !error){
-  <div class="table-container">
-    <table class="band-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for(band of bands; track band.id; let i = $index){
-        <tr>
-          <td>{{ i+1 }}</td>
-          <td>{{ band.name }}</td>
-        </tr>
-        }
-      </tbody>
-    </table>
+  <div class="table-wrapper">
+    <div class="table-container">
+      <table class="band-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(band of bands; track band.id; let i = $index){
+          <tr>
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ band.name }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
 
-    @if(bands.length === 0){
-    <div class="no-data">
-      <i class="feather icon-inbox"></i>
-      <p>No bands found</p>
+      @if(bands.length === 0){
+      <div class="no-data">
+        <i class="feather icon-inbox"></i>
+        <p>No bands found</p>
+      </div>
+      }
     </div>
+
+    @if(totalItems > 0){
+    <app-pagination
+      [totalItems]="totalItems"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
     }
   </div>
   }

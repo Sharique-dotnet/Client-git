@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Band, BandViewModel } from '../models/band.model';
 
@@ -13,15 +12,12 @@ export class BandService {
 
   constructor(private http: HttpClient) { }
 
-  getBands(page?: number, pageSize?: number, name?: string): Observable<Band[]> {
-    const pageNum = page || 0;
+  getBands(page?: number, pageSize?: number, name?: string): Observable<BandViewModel> {
+    const pageNum = page || 1;
     const size = pageSize || 10;
     const searchName = name || '';
 
-    return this.http.get<BandViewModel>(`${this.apiUrl}/bandList/${pageNum}/${size}/${searchName}`)
-      .pipe(
-        map(response => response.bandModel || [])
-      );
+    return this.http.get<BandViewModel>(`${this.apiUrl}/bandList/${pageNum}/${size}/${searchName}`);
   }
 
   getBandById(id: string): Observable<Band> {
