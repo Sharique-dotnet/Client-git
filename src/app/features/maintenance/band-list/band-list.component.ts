@@ -4,6 +4,7 @@ import { BandService } from '../../../core/services/band.service';
 import { Band } from 'src/app/core/models/band.model';
 import { AddBandComponent } from '../add-band/add-band.component';
 import { PaginationComponent, PageChangeEvent } from '../../../shared/components/pagination/pagination.component';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-band-list',
@@ -25,7 +26,10 @@ export class BandListComponent implements OnInit {
   totalItems: number = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
-  constructor(private bandService: BandService) { }
+  constructor(
+    private bandService: BandService,
+    private alertService: AlertService
+  ) { }
 
   ngOnInit(): void {
     this.loadBands();
@@ -43,6 +47,7 @@ export class BandListComponent implements OnInit {
       error: (err) => {
         this.error = 'Failed to load bands';
         this.loading = false;
+        this.alertService.showError('Failed to load bands', 'Error');
         console.error('Error loading bands:', err);
       }
     });
@@ -78,10 +83,15 @@ export class BandListComponent implements OnInit {
     this.loadBands(); // Reload current page after updating
   }
 
-  deleteBand(band: Band): void {
-    if (confirm(`Are you sure you want to delete "${band.name}"?`)) {
+  async deleteBand(band: Band): Promise<void> {
+    const confirmed = await this.alertService.showDeleteConfirm(`"${band.name}"`);
+    
+    if (confirmed) {
       this.bandService.deleteBand(band.id).subscribe({
         next: () => {
+          // Show success toast
+          this.alertService.showSuccess(`"${band.name}" has been deleted successfully`, 'Deleted');
+          
           // If current page becomes empty and it's not the first page, go to previous page
           if (this.bands.length === 1 && this.currentPage > 0) {
             this.currentPage--;
@@ -90,6 +100,7 @@ export class BandListComponent implements OnInit {
         },
         error: (err) => {
           this.error = 'Failed to delete band';
+          this.alertService.showError('Failed to delete band. Please try again.', 'Error');
           console.error('Error deleting band:', err);
           setTimeout(() => {
             this.error = '';
