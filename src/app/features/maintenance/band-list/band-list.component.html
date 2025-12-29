@@ -1,0 +1,89 @@
+<div class="band-list-container">
+  <div class="header">
+    <h2>Band List</h2>
+    <button class="btn btn-add" (click)="openAddBandModal()">
+      <i class="feather icon-plus"></i>
+      Add Band
+    </button>
+  </div>
+
+  @if(loading){
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Loading bands...</p>
+  </div>
+  }
+
+  @if(error){
+  <div class="error">
+    <i class="feather icon-alert-circle"></i>
+    {{ error }}
+  </div>
+  }
+
+  @if(!loading && !error){
+  <div class="table-wrapper">
+    <div class="table-container">
+      <table class="band-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(band of bands; track band.id; let i = $index){
+          <tr>
+            <td>{{ currentPage * pageSize + i + 1 }}</td>
+            <td>{{ band.name }}</td>
+            <td class="actions-cell">
+              <button 
+                class="action-btn edit-btn" 
+                (click)="openEditBandModal(band)"
+                title="Edit band"
+              >
+                <i class="feather icon-edit"></i>
+              </button>
+              <button 
+                class="action-btn delete-btn" 
+                (click)="deleteBand(band)"
+                title="Delete band"
+              >
+                <i class="feather icon-trash-2"></i>
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      @if(bands.length === 0){
+      <div class="no-data">
+        <i class="feather icon-inbox"></i>
+        <p>No bands found</p>
+      </div>
+      }
+    </div>
+
+    @if(totalItems > 0){
+    <app-pagination
+      [totalItems]="totalItems"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
+    }
+  </div>
+  }
+</div>
+
+@if(showBandModal){
+<app-add-band
+  [band]="selectedBand"
+  (close)="closeBandModal()"
+  (bandAdded)="onBandAdded()"
+  (bandUpdated)="onBandUpdated()"
+></app-add-band>
+}

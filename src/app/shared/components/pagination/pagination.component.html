@@ -1,0 +1,81 @@
+<div class="pagination-container">
+  <div class="pagination-info">
+    <span class="items-info">
+      Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} items
+    </span>
+    
+    <div class="page-size-selector">
+      <label for="pageSize">Items per page:</label>
+      <select 
+        id="pageSize" 
+        [(ngModel)]="pageSize" 
+        (change)="onPageSizeChange(pageSize)"
+        class="page-size-select"
+      >
+        @for(size of pageSizeOptions; track size){
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if(totalPages > 1){
+  <div class="pagination-controls">
+    <button 
+      class="pagination-btn" 
+      (click)="goToFirstPage()" 
+      [disabled]="currentPage === 0"
+      title="First page"
+    >
+      <i class="feather icon-chevrons-left"></i>
+    </button>
+    
+    <button 
+      class="pagination-btn" 
+      (click)="goToPreviousPage()" 
+      [disabled]="currentPage === 0"
+      title="Previous page"
+    >
+      <i class="feather icon-chevron-left"></i>
+    </button>
+
+    <div class="page-numbers">
+      @if(pages[0] > 0){
+        <span class="ellipsis">...</span>
+      }
+      
+      @for(page of pages; track page){
+        <button 
+          class="page-btn"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ getDisplayPageNumber(page) }}
+        </button>
+      }
+      
+      @if(pages[pages.length - 1] < totalPages - 1){
+        <span class="ellipsis">...</span>
+      }
+    </div>
+
+    <button 
+      class="pagination-btn" 
+      (click)="goToNextPage()" 
+      [disabled]="currentPage === totalPages - 1"
+      title="Next page"
+    >
+      <i class="feather icon-chevron-right"></i>
+    </button>
+    
+    <button 
+      class="pagination-btn" 
+      (click)="goToLastPage()" 
+      [disabled]="currentPage === totalPages - 1"
+      title="Last page"
+    >
+      <i class="feather icon-chevrons-right"></i>
+    </button>
+  </div>
+  }
+</div>

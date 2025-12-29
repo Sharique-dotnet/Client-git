@@ -243,7 +243,7 @@
     semver "7.7.2"
     yargs "17.7.2"
 
-"@angular/common@^20.0.0", "@angular/common@^20.0.0 || ^21.0.0", "@angular/common@>=19.0.0", "@angular/common@20.0.5":
+"@angular/common@^20.0.0", "@angular/common@^20.0.0 || ^21.0.0", "@angular/common@>=16.0.0-0", "@angular/common@>=19.0.0", "@angular/common@20.0.5":
   version "20.0.5"
   resolved "https://registry.npmjs.org/@angular/common/-/common-20.0.5.tgz"
   integrity sha512-R7SQaOVYjVnrGHOq2RnuPn0pGofGVTDgy5EoHzF8ulb5MG/d7GFwCaMgfAbp3/Cw1CJzP2ZB54O8x9SMuqExyg==
@@ -271,7 +271,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/core@^20.0.0", "@angular/core@^20.0.0 || ^21.0.0", "@angular/core@>=19.0.0", "@angular/core@20.0.5":
+"@angular/core@^20.0.0", "@angular/core@^20.0.0 || ^21.0.0", "@angular/core@>=16.0.0-0", "@angular/core@>=19.0.0", "@angular/core@20.0.5":
   version "20.0.5"
   resolved "https://registry.npmjs.org/@angular/core/-/core-20.0.5.tgz"
   integrity sha512-r7YQXZvKPAMUXeo3psKTZxyYJrwidTwDPrzxMX3EGqZxv0eDnMPWCxH2y0O2X4BT0Nm1iAqx3zhGrSFc0vD60Q==
@@ -302,7 +302,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/platform-browser@^20.0.0", "@angular/platform-browser@20.0.5":
+"@angular/platform-browser@^20.0.0", "@angular/platform-browser@>=16.0.0-0", "@angular/platform-browser@20.0.5":
   version "20.0.5"
   resolved "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-20.0.5.tgz"
   integrity sha512-gE3C5/ZAXdAlBFvvX/crboIy5skbV5mtxRoEULwf7xF9WJLlYzY3w+PCRHV6/Z21UJ3ikCcbaaowBx378FYhQg==
@@ -4114,6 +4114,11 @@ jsonparse@^1.3.1:
   resolved "https://registry.npmjs.org/jsonparse/-/jsonparse-1.3.1.tgz"
   integrity sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==
 
+jwt-decode@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/jwt-decode/-/jwt-decode-4.0.0.tgz"
+  integrity sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==
+
 karma-source-map-support@1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/karma-source-map-support/-/karma-source-map-support-1.4.0.tgz"
@@ -4616,6 +4621,13 @@ ngx-scrollbar@18.0.0:
   version "18.0.0"
   resolved "https://registry.npmjs.org/ngx-scrollbar/-/ngx-scrollbar-18.0.0.tgz"
   integrity sha512-+ykmY491x+nzXvnecJvZHvDz0YWuX1r7SYMxNG4RVHXm5Z68P/8kd/3ryLD6DXdNWmJawd4NGvqq2ZkUKb/g3A==
+  dependencies:
+    tslib "^2.3.0"
+
+ngx-toastr@^19.0.0:
+  version "19.1.0"
+  resolved "https://registry.npmjs.org/ngx-toastr/-/ngx-toastr-19.1.0.tgz"
+  integrity sha512-Qa7Kg7QzGKNtp1v04hu3poPKKx8BGBD/Onkhm6CdH5F0vSMdq+BdR/f8DTpZnGFksW891tAFufpiWb9UZX+3vg==
   dependencies:
     tslib "^2.3.0"
 
@@ -5850,6 +5862,11 @@ supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
+
+sweetalert2@^11.14.5:
+  version "11.26.17"
+  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.26.17.tgz"
+  integrity sha512-kkaySn1IRfwNlf9AkZVqDmBINDWw9NRR6Ij0O5dBRBOD1+mbtZJWxxR9/pA90nce9E5tIIkJ7SWij4rMWXtA1g==
 
 tapable@^2.1.1, tapable@^2.2.0, tapable@^2.2.1:
   version "2.2.2"

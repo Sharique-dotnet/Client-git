@@ -1,5 +1,5 @@
 // angular import
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { animate, style, transition, trigger } from '@angular/animations';
 
@@ -8,6 +8,7 @@ import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-nav-right',
@@ -27,11 +28,13 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
   ]
 })
 export class NavRightComponent {
+  // services
+  private authService = inject(AuthService);
+  
   // public props
   visibleUserList: boolean;
   chatMessage: boolean;
   friendId!: number;
-  username: string = '';
 
   @Output() lockScreen = new EventEmitter<void>();
 
@@ -39,12 +42,11 @@ export class NavRightComponent {
   constructor(private router: Router) {
     this.visibleUserList = false;
     this.chatMessage = false;
-    this.loadUserData();
   }
 
-  // Load user data from localStorage
-  loadUserData(): void {
-    this.username = localStorage.getItem('username') || 'Guest';
+  // Get username from AuthService
+  get username(): string {
+    return this.authService.currentUser()?.fullName || 'Guest';
   }
 
   // Lock screen functionality
@@ -52,14 +54,13 @@ export class NavRightComponent {
     this.lockScreen.emit();
   }
 
-  // Logout functionality
+  /**
+   * Logout functionality
+   * Pattern from Angular 4 ClientApp admin.component
+   */
   onLogout(): void {
-    // Clear authentication state
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('username');
-
-    // Redirect to login page
-    this.router.navigate(['/login']);
+    this.authService.logout();
+    this.authService.redirectLogoutUser();
   }
 
   // public method

@@ -26,47 +26,27 @@ export const NavigationItems: NavigationItem[] = [
     icon: 'icon-group',
     children: [
       {
-        id: 'sample-page',
-        title: 'Sample Page',
+        id: 'dashboard',
+        title: 'Dashboard',
         type: 'item',
-        url: '/sample-page',
+        url: '/dashboard',
         classes: 'nav-item',
-        icon: 'feather icon-sidebar'
-      }
-    ]
-  },
-  {
-    id: 'Authentication',
-    title: 'Authentication',
-    type: 'group',
-    icon: 'icon-group',
-    children: [
-      {
-        id: 'signup',
-        title: 'Sign up',
-        type: 'item',
-        url: '/register',
-        icon: 'feather icon-log-out',
-        target: true,
-        breadcrumbs: false
+        icon: 'feather icon-home'
       },
       {
-        id: 'signin',
-        title: 'Sign in',
-        type: 'item',
-        url: '/login',
-        icon: 'feather icon-log-in',
-        target: true,
-        breadcrumbs: false
-      },
-      {
-        id: 'resetpassword',
-        title: 'Reset password',
-        type: 'item',
-        url: '/reset-password',
-        icon: 'feather icon-refresh-cw',
-        target: true,
-        breadcrumbs: false
+        id: 'maintenance',
+        title: 'Maintenance',
+        type: 'collapse',
+        icon: 'feather icon-settings',
+        children: [
+          {
+            id: 'band',
+            title: 'Band',
+            type: 'item',
+            url: '/maintenance/band-list',
+            icon: 'feather icon-list'
+          }
+        ]
       }
     ]
   }

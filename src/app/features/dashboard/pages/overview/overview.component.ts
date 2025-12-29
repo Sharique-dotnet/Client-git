@@ -10,5 +10,5 @@ import { CardComponent } from '../../../../theme/shared/components/card/card.com
   styleUrls: ['./overview.component.scss']
 })
 export class OverviewComponent {
-  // Dashboard overview component
+  // Dashboard overview component - redirect target after login
 }

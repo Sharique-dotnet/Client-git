@@ -5,7 +5,7 @@
         <div class="col-md-12">
           <div class="card-body">
             <img src="assets/images/logo-dark.png" alt="logo" class="img-fluid mb-4" />
-            <h4 class="mb-3 f-w-400">Sign In</h4>
+            <h4 class="mb-3 f-w-400">Sign In to Empower360Plus</h4>
 
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
               <!-- Error Message -->
@@ -14,56 +14,65 @@
                 <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
               </div>
 
-              <!-- Default Credentials Info -->
-              <div class="alert alert-info" role="alert">
-                <small><strong>Default Credentials:</strong><br>
-                  Username: <strong>admin</strong> | Password: <strong>admin123</strong></small>
-              </div>
-
+              <!-- Username Field -->
               <div class="input-group mb-3">
                 <span class="input-group-text"><i class="feather icon-user"></i></span>
                 <input 
                   type="text" 
                   class="form-control" 
-                  placeholder="Username" 
+                  placeholder="Username or Email" 
                   formControlName="username"
                   [class.is-invalid]="username?.invalid && username?.touched"
-                  aria-label="Username" />
+                  aria-label="Username"
+                  autocomplete="username" />
               </div>
               <div *ngIf="username?.invalid && username?.touched" class="text-danger text-start mb-2">
-                <small>Username is required</small>
+                <small *ngIf="username?.errors?.['required']">Username is required</small>
+                <small *ngIf="username?.errors?.['minlength']">Username must be at least 3 characters</small>
               </div>
 
+              <!-- Password Field -->
               <div class="input-group mb-3">
                 <span class="input-group-text"><i class="feather icon-lock"></i></span>
                 <input 
-                  type="password" 
+                  [type]="showPassword ? 'text' : 'password'" 
                   class="form-control" 
                   placeholder="Password" 
                   formControlName="password"
                   [class.is-invalid]="password?.invalid && password?.touched"
-                  aria-label="Password" />
+                  aria-label="Password"
+                  autocomplete="current-password" />
+                <button 
+                  class="btn btn-outline-secondary" 
+                  type="button" 
+                  (click)="togglePasswordVisibility()"
+                  tabindex="-1">
+                  <i [class]="showPassword ? 'feather icon-eye-off' : 'feather icon-eye'"></i>
+                </button>
               </div>
               <div *ngIf="password?.invalid && password?.touched" class="text-danger text-start mb-2">
-                <small>Password is required</small>
+                <small *ngIf="password?.errors?.['required']">Password is required</small>
+                <small *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</small>
               </div>
 
+              <!-- Remember Me -->
               <div class="form-group text-start mt-2 mb-3">
                 <div class="form-check">
                   <input 
                     type="checkbox" 
                     class="form-check-input" 
                     formControlName="rememberMe" 
-                    id="checkbox-fill-a1" />
-                  <label class="form-check-label" for="checkbox-fill-a1">Remember me</label>
+                    id="rememberMe" />
+                  <label class="form-check-label" for="rememberMe">Remember me</label>
                 </div>
               </div>
 
+              <!-- Submit Button -->
               <div class="d-grid">
                 <button 
                   type="submit" 
                   class="btn btn-block btn-primary mb-4"
-                  [disabled]="isLoading || loginForm.invalid">
+                  [disabled]="isLoading">
                   <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   <span *ngIf="!isLoading">Sign In</span>
                   <span *ngIf="isLoading">Signing in...</span>
