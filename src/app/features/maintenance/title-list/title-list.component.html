@@ -8,7 +8,7 @@
     </button>
   </div>
 
-  <!-- Search + Page Size -->
+  <!-- Search Section -->
   <div class="search-section">
     <div class="search-box">
       <i class="fas fa-search"></i>
@@ -19,13 +19,6 @@
         placeholder="Search titles..."
         class="search-input"
       />
-    </div>
-
-    <div class="page-size">
-      <label for="pageSize">Page size</label>
-      <select id="pageSize" [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
-        <option *ngFor="let opt of pageSizeOptions" [ngValue]="opt">{{ opt }}</option>
-      </select>
     </div>
   </div>
 
@@ -69,32 +62,13 @@
     </table>
   </div>
 
-  <!-- Pagination Section (0-based currentPage internally, 1-based display) -->
-  <div *ngIf="!loading && totalPages > 1" class="pagination">
-    <button class="btn-page" [disabled]="currentPage === 0" (click)="previousPage()">
-      <i class="fas fa-chevron-left"></i>
-      Previous
-    </button>
-
-    <div class="page-numbers">
-      <button
-        *ngFor="let page of getPaginationPages()"
-        class="btn-page-number"
-        [class.active]="page === (currentPage + 1)"
-        (click)="goToPage(page)"
-      >
-        {{ page }}
-      </button>
-    </div>
-
-    <button class="btn-page" [disabled]="(currentPage + 1) === totalPages" (click)="nextPage()">
-      Next
-      <i class="fas fa-chevron-right"></i>
-    </button>
-  </div>
-
-  <!-- Footer Info -->
-  <div *ngIf="!loading" class="footer-info">
-    <span>Showing {{ filteredTitles.length }} of {{ totalItems }} titles</span>
-  </div>
+  <!-- Shared Pagination Component -->
+  <app-pagination
+    *ngIf="!loading && totalItems > 0"
+    [totalItems]="totalItems"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    (pageChange)="onPageChange($event)"
+  ></app-pagination>
 </div>

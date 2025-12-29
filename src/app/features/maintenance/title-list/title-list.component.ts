@@ -4,16 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Title } from 'src/app/core/models/title.model';
 import { TitleService } from 'src/app/core/services/title.service';
-
-export interface PageChangeEvent {
-  page: number;
-  pageSize: number;
-}
+import { PaginationComponent, PageChangeEvent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-title-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaginationComponent],
   templateUrl: './title-list.component.html',
   styleUrls: ['./title-list.component.scss']
 })
@@ -39,10 +35,6 @@ export class TitleListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTitles();
-  }
-
-  get totalPages(): number {
-    return Math.ceil((this.totalItems || 0) / this.pageSize);
   }
 
   loadTitles(): void {
@@ -75,55 +67,6 @@ export class TitleListComponent implements OnInit {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
     this.loadTitles();
-  }
-
-  onPageSizeChange(pageSize: number): void {
-    this.currentPage = 0;
-    this.pageSize = pageSize;
-    this.loadTitles();
-  }
-
-  // Generates 1-based page numbers for display, while currentPage stays 0-based
-  getPaginationPages(): number[] {
-    const total = this.totalPages;
-    if (total <= 1) return [];
-
-    const pages: number[] = [];
-    const maxVisiblePages = 5;
-
-    const currentDisplayPage = this.currentPage + 1;
-
-    let startPage = Math.max(1, currentDisplayPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(total, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  }
-
-  goToPage(displayPage: number): void {
-    const targetPage = displayPage - 1;
-    if (targetPage >= 0 && targetPage < this.totalPages) {
-      this.onPageChange({ page: targetPage, pageSize: this.pageSize });
-    }
-  }
-
-  previousPage(): void {
-    if (this.currentPage > 0) {
-      this.onPageChange({ page: this.currentPage - 1, pageSize: this.pageSize });
-    }
-  }
-
-  nextPage(): void {
-    if (this.currentPage + 1 < this.totalPages) {
-      this.onPageChange({ page: this.currentPage + 1, pageSize: this.pageSize });
-    }
   }
 
   onAdd(): void {
