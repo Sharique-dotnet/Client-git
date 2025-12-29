@@ -3,8 +3,7 @@ export interface Title {
   name: string;
 }
 
-// API: GET /api/Title/titleList/{page?}/{pageSize?}/{name?}
-export interface TitleListResponse {
-  functionalTitleModel: Title[];
+export interface TitleViewModel {
+  titleModel: Title[];
   totalCount: number;
 }
