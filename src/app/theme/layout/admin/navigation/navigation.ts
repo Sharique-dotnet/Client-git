@@ -40,6 +40,13 @@ export const NavigationItems: NavigationItem[] = [
         icon: 'feather icon-settings',
         children: [
           {
+            id: 'title',
+            title: 'Title',
+            type: 'item',
+            url: '/maintenance/title-list',
+            icon: 'feather icon-list'
+          },
+          {
             id: 'band',
             title: 'Band',
             type: 'item',
