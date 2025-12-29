@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Title, TitleListResponse } from 'src/app/core/models/title.model';
+import { Title } from 'src/app/core/models/title.model';
+import { TitleService } from 'src/app/core/services/title.service';
 
 @Component({
   selector: 'app-title-list',
@@ -23,7 +24,10 @@ export class TitleListComponent implements OnInit {
   totalCount: number = 0;
   totalPages: number = 0;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private titleService: TitleService
+  ) {}
 
   ngOnInit(): void {
     this.loadTitles();
@@ -32,40 +36,27 @@ export class TitleListComponent implements OnInit {
   loadTitles(): void {
     this.isLoading = true;
 
-    // TODO: Replace with actual API call
-    // Mock data for now
-    setTimeout(() => {
-      const mockData: TitleListResponse = {
-        functionalTitleModel: [
-          { id: '1', name: 'Software Engineer' },
-          { id: '2', name: 'Senior Software Engineer' },
-          { id: '3', name: 'Team Lead' },
-          { id: '4', name: 'Project Manager' },
-          { id: '5', name: 'Technical Architect' }
-        ],
-        totalCount: 5
-      };
-
-      this.titles = mockData.functionalTitleModel;
-      this.totalCount = mockData.totalCount;
-      this.totalPages = Math.ceil(this.totalCount / this.pageSize);
-      this.filterTitles();
-      this.isLoading = false;
-    }, 500);
-  }
-
-  filterTitles(): void {
-    if (!this.searchTerm.trim()) {
-      this.filteredTitles = [...this.titles];
-    } else {
-      const term = this.searchTerm.toLowerCase();
-      this.filteredTitles = this.titles.filter((title) => title.name.toLowerCase().includes(term));
-    }
+    this.titleService.getTitleList(this.currentPage, this.pageSize, this.searchTerm).subscribe({
+      next: (res) => {
+        this.titles = res.functionalTitleModel ?? [];
+        this.filteredTitles = [...this.titles];
+        this.totalCount = res.totalCount ?? 0;
+        this.totalPages = Math.ceil(this.totalCount / this.pageSize);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.titles = [];
+        this.filteredTitles = [];
+        this.totalCount = 0;
+        this.totalPages = 0;
+        this.isLoading = false;
+      }
+    });
   }
 
   onSearch(): void {
     this.currentPage = 1;
-    this.filterTitles();
+    this.loadTitles();
   }
 
   onAdd(): void {
@@ -80,10 +71,10 @@ export class TitleListComponent implements OnInit {
 
   onDelete(title: Title): void {
     if (confirm(`Are you sure you want to delete "${title.name}"?`)) {
-      // TODO: Implement delete API call
-      this.titles = this.titles.filter((b) => b.id !== title.id);
-      this.totalCount--;
-      this.filterTitles();
+      this.titleService.deleteTitle(title.id).subscribe({
+        next: () => this.loadTitles(),
+        error: () => this.loadTitles()
+      });
     }
   }
 
