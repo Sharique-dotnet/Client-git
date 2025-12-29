@@ -1,43 +1,35 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Title, TitleListResponse } from '../models/title.model';
+import { Title, TitleViewModel } from '../models/title.model';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TitleService {
   private readonly controllerUrl = '/api/Title';
+  private apiUrl = `${environment.apiEndpoint}/Title`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getTitleList(page?: number, pageSize?: number, name?: string): Observable<TitleListResponse> {
-    const safePage = page ?? 0;
-    const safePageSize = pageSize ?? 10;
-
-    let url = `${this.controllerUrl}/titleList/${safePage}/${safePageSize}`;
-
-    const search = (name ?? '').trim();
-    if (search) {
-      url += `/${encodeURIComponent(search)}`;
-    }
-
-    return this.http.get<TitleListResponse>(url);
+  getTitles(page: number = 0, pageSize: number = 10, name: string = ''): Observable<TitleViewModel> {
+    return this.http.get<TitleViewModel>(`${this.apiUrl}/titleList/${page}/${pageSize}/${name}`);
   }
 
   getTitleById(id: string): Observable<Title> {
-    return this.http.get<Title>(`${this.controllerUrl}/title/${id}`);
+    return this.http.get<Title>(`${this.apiUrl}/title/${id}`);
   }
 
-  createTitle(model: Pick<Title, 'name'>): Observable<void> {
-    return this.http.post<void>(`${this.controllerUrl}/create`, model);
+  createTitle(title: Title): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/create`, title);
   }
 
-  updateTitle(id: string, model: Pick<Title, 'name'>): Observable<void> {
-    return this.http.put<void>(`${this.controllerUrl}/update/${id}`, model);
+  updateTitle(id: string, title: Title): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/update/${id}`, title);
   }
 
   deleteTitle(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.controllerUrl}/delete/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
 }
