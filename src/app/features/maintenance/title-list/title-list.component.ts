@@ -2,16 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
-interface Title {
-  id: string;
-  name: string;
-}
-
-interface TitleResponse {
-  functionalTitleModel: Title[];
-  totalCount: number;
-}
+import { Title, TitleListResponse } from 'src/app/core/models/title.model';
 
 @Component({
   selector: 'app-title-list',
@@ -25,7 +16,7 @@ export class TitleListComponent implements OnInit {
   filteredTitles: Title[] = [];
   searchTerm: string = '';
   isLoading: boolean = false;
-  
+
   // Pagination
   currentPage: number = 1;
   pageSize: number = 10;
@@ -40,11 +31,11 @@ export class TitleListComponent implements OnInit {
 
   loadTitles(): void {
     this.isLoading = true;
-    
+
     // TODO: Replace with actual API call
     // Mock data for now
     setTimeout(() => {
-      const mockData: TitleResponse = {
+      const mockData: TitleListResponse = {
         functionalTitleModel: [
           { id: '1', name: 'Software Engineer' },
           { id: '2', name: 'Senior Software Engineer' },
@@ -54,7 +45,7 @@ export class TitleListComponent implements OnInit {
         ],
         totalCount: 5
       };
-      
+
       this.titles = mockData.functionalTitleModel;
       this.totalCount = mockData.totalCount;
       this.totalPages = Math.ceil(this.totalCount / this.pageSize);
@@ -68,9 +59,7 @@ export class TitleListComponent implements OnInit {
       this.filteredTitles = [...this.titles];
     } else {
       const term = this.searchTerm.toLowerCase();
-      this.filteredTitles = this.titles.filter(title =>
-        title.name.toLowerCase().includes(term)
-      );
+      this.filteredTitles = this.titles.filter((title) => title.name.toLowerCase().includes(term));
     }
   }
 
@@ -92,7 +81,7 @@ export class TitleListComponent implements OnInit {
   onDelete(title: Title): void {
     if (confirm(`Are you sure you want to delete "${title.name}"?`)) {
       // TODO: Implement delete API call
-      this.titles = this.titles.filter(b => b.id !== title.id);
+      this.titles = this.titles.filter((b) => b.id !== title.id);
       this.totalCount--;
       this.filterTitles();
     }
