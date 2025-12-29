@@ -8,7 +8,7 @@
     </button>
   </div>
 
-  <!-- Search Section -->
+  <!-- Search + Page Size -->
   <div class="search-section">
     <div class="search-box">
       <i class="fas fa-search"></i>
@@ -20,16 +20,26 @@
         class="search-input"
       />
     </div>
+
+    <div class="page-size">
+      <label for="pageSize">Page size</label>
+      <select id="pageSize" [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+        <option *ngFor="let opt of pageSizeOptions" [ngValue]="opt">{{ opt }}</option>
+      </select>
+    </div>
   </div>
 
+  <!-- Error -->
+  <div *ngIf="error" class="error-msg">{{ error }}</div>
+
   <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="loading-spinner">
+  <div *ngIf="loading" class="loading-spinner">
     <i class="fas fa-spinner fa-spin"></i>
     <span>Loading...</span>
   </div>
 
   <!-- Table Section -->
-  <div *ngIf="!isLoading" class="table-container">
+  <div *ngIf="!loading" class="table-container">
     <table class="data-table">
       <thead>
         <tr>
@@ -59,13 +69,9 @@
     </table>
   </div>
 
-  <!-- Pagination Section -->
-  <div *ngIf="!isLoading && totalPages > 1" class="pagination">
-    <button
-      class="btn-page"
-      [disabled]="currentPage === 1"
-      (click)="onPageChange(currentPage - 1)"
-    >
+  <!-- Pagination Section (0-based currentPage internally, 1-based display) -->
+  <div *ngIf="!loading && totalPages > 1" class="pagination">
+    <button class="btn-page" [disabled]="currentPage === 0" (click)="previousPage()">
       <i class="fas fa-chevron-left"></i>
       Previous
     </button>
@@ -74,25 +80,21 @@
       <button
         *ngFor="let page of getPaginationPages()"
         class="btn-page-number"
-        [class.active]="page === currentPage"
-        (click)="onPageChange(page)"
+        [class.active]="page === (currentPage + 1)"
+        (click)="goToPage(page)"
       >
         {{ page }}
       </button>
     </div>
 
-    <button
-      class="btn-page"
-      [disabled]="currentPage === totalPages"
-      (click)="onPageChange(currentPage + 1)"
-    >
+    <button class="btn-page" [disabled]="(currentPage + 1) === totalPages" (click)="nextPage()">
       Next
       <i class="fas fa-chevron-right"></i>
     </button>
   </div>
 
   <!-- Footer Info -->
-  <div *ngIf="!isLoading" class="footer-info">
-    <span>Showing {{ filteredTitles.length }} of {{ totalCount }} titles</span>
+  <div *ngIf="!loading" class="footer-info">
+    <span>Showing {{ filteredTitles.length }} of {{ totalItems }} titles</span>
   </div>
 </div>

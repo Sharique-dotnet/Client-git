@@ -5,6 +5,11 @@ import { Router } from '@angular/router';
 import { Title } from 'src/app/core/models/title.model';
 import { TitleService } from 'src/app/core/services/title.service';
 
+export interface PageChangeEvent {
+  page: number;
+  pageSize: number;
+}
+
 @Component({
   selector: 'app-title-list',
   standalone: true,
@@ -15,14 +20,17 @@ import { TitleService } from 'src/app/core/services/title.service';
 export class TitleListComponent implements OnInit {
   titles: Title[] = [];
   filteredTitles: Title[] = [];
-  searchTerm: string = '';
-  isLoading: boolean = false;
 
-  // Pagination
-  currentPage: number = 1;
+  loading: boolean = false;
+  error: string = '';
+
+  searchTerm: string = '';
+
+  // Pagination properties (0-based indexing) - aligned with BandListComponent
+  currentPage: number = 0;
   pageSize: number = 10;
-  totalCount: number = 0;
-  totalPages: number = 0;
+  totalItems: number = 0;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
 
   constructor(
     private router: Router,
@@ -33,63 +41,60 @@ export class TitleListComponent implements OnInit {
     this.loadTitles();
   }
 
+  get totalPages(): number {
+    return Math.ceil((this.totalItems || 0) / this.pageSize);
+  }
+
   loadTitles(): void {
-    this.isLoading = true;
+    this.loading = true;
+    this.error = '';
 
     this.titleService.getTitleList(this.currentPage, this.pageSize, this.searchTerm).subscribe({
       next: (res) => {
-        this.titles = res.functionalTitleModel ?? [];
+        this.titles = res.functionalTitleModel || [];
         this.filteredTitles = [...this.titles];
-        this.totalCount = res.totalCount ?? 0;
-        this.totalPages = Math.ceil(this.totalCount / this.pageSize);
-        this.isLoading = false;
+        this.totalItems = res.totalCount || 0;
+        this.loading = false;
       },
       error: () => {
         this.titles = [];
         this.filteredTitles = [];
-        this.totalCount = 0;
-        this.totalPages = 0;
-        this.isLoading = false;
+        this.totalItems = 0;
+        this.loading = false;
+        this.error = 'Failed to load titles';
       }
     });
   }
 
   onSearch(): void {
-    this.currentPage = 1;
+    this.currentPage = 0; // Reset to first page (0) on search
     this.loadTitles();
   }
 
-  onAdd(): void {
-    // Navigate to add title page
-    this.router.navigate(['/maintenance/title/add']);
+  onPageChange(event: PageChangeEvent): void {
+    this.currentPage = event.page;
+    this.pageSize = event.pageSize;
+    this.loadTitles();
   }
 
-  onEdit(title: Title): void {
-    // Navigate to edit title page
-    this.router.navigate(['/maintenance/title/edit', title.id]);
+  onPageSizeChange(pageSize: number): void {
+    this.currentPage = 0;
+    this.pageSize = pageSize;
+    this.loadTitles();
   }
 
-  onDelete(title: Title): void {
-    if (confirm(`Are you sure you want to delete "${title.name}"?`)) {
-      this.titleService.deleteTitle(title.id).subscribe({
-        next: () => this.loadTitles(),
-        error: () => this.loadTitles()
-      });
-    }
-  }
-
-  onPageChange(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.loadTitles();
-    }
-  }
-
+  // Generates 1-based page numbers for display, while currentPage stays 0-based
   getPaginationPages(): number[] {
+    const total = this.totalPages;
+    if (total <= 1) return [];
+
     const pages: number[] = [];
     const maxVisiblePages = 5;
-    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    const currentDisplayPage = this.currentPage + 1;
+
+    let startPage = Math.max(1, currentDisplayPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(total, startPage + maxVisiblePages - 1);
 
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -100,5 +105,53 @@ export class TitleListComponent implements OnInit {
     }
 
     return pages;
+  }
+
+  goToPage(displayPage: number): void {
+    const targetPage = displayPage - 1;
+    if (targetPage >= 0 && targetPage < this.totalPages) {
+      this.onPageChange({ page: targetPage, pageSize: this.pageSize });
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.onPageChange({ page: this.currentPage - 1, pageSize: this.pageSize });
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage + 1 < this.totalPages) {
+      this.onPageChange({ page: this.currentPage + 1, pageSize: this.pageSize });
+    }
+  }
+
+  onAdd(): void {
+    this.router.navigate(['/maintenance/title/add']);
+  }
+
+  onEdit(title: Title): void {
+    this.router.navigate(['/maintenance/title/edit', title.id]);
+  }
+
+  onDelete(title: Title): void {
+    if (confirm(`Are you sure you want to delete "${title.name}"?`)) {
+      this.titleService.deleteTitle(title.id).subscribe({
+        next: () => {
+          // If current page becomes empty and it's not the first page, go to previous page
+          if (this.filteredTitles.length === 1 && this.currentPage > 0) {
+            this.currentPage--;
+          }
+          this.loadTitles();
+        },
+        error: () => {
+          this.error = 'Failed to delete title';
+          this.loadTitles();
+          setTimeout(() => {
+            this.error = '';
+          }, 3000);
+        }
+      });
+    }
   }
 }
