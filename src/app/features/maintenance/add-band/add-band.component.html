@@ -15,13 +15,6 @@
       </div>
       }
 
-      @if(successMessage){
-      <div class="alert alert-success">
-        <i class="feather icon-check-circle"></i>
-        <span>{{ successMessage }}</span>
-      </div>
-      }
-
       <form (ngSubmit)="onSubmit()" #bandForm="ngForm">
         <div class="form-group">
           <label for="bandName">Band Name <span class="required">*</span></label>
