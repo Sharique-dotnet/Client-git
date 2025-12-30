@@ -1,36 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Title } from 'src/app/core/models/title.model';
 import { TitleService } from 'src/app/core/services/title.service';
 import { PaginationComponent, PageChangeEvent } from '../../../shared/components/pagination/pagination.component';
+import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
   selector: 'app-title-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, PaginationComponent],
   templateUrl: './title-list.component.html',
   styleUrls: ['./title-list.component.scss']
 })
 export class TitleListComponent implements OnInit {
   titles: Title[] = [];
-  filteredTitles: Title[] = [];
-
   loading: boolean = false;
   error: string = '';
 
-  searchTerm: string = '';
-
-  // Pagination properties (0-based indexing) - aligned with BandListComponent
   currentPage: number = 0;
   pageSize: number = 10;
   totalItems: number = 0;
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
   constructor(
-    private router: Router,
-    private titleService: TitleService
+    private titleService: TitleService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -40,61 +34,24 @@ export class TitleListComponent implements OnInit {
   loadTitles(): void {
     this.loading = true;
     this.error = '';
-
-    this.titleService.getTitleList(this.currentPage, this.pageSize, this.searchTerm).subscribe({
-      next: (res) => {
-        this.titles = res.functionalTitleModel || [];
-        this.filteredTitles = [...this.titles];
-        this.totalItems = res.totalCount || 0;
+    this.titleService.getTitles(this.currentPage, this.pageSize).subscribe({
+      next: (response) => {
+        this.titles = response.functionalTitleModel || [];
+        this.totalItems = response.totalCount || 0;
         this.loading = false;
       },
-      error: () => {
-        this.titles = [];
-        this.filteredTitles = [];
-        this.totalItems = 0;
-        this.loading = false;
+      error: (err) => {
         this.error = 'Failed to load titles';
+        this.loading = false;
+        this.alertService.showError('Failed to load titles', 'Error');
+        console.error('Error loading titles:', err);
       }
     });
-  }
-
-  onSearch(): void {
-    this.currentPage = 0; // Reset to first page (0) on search
-    this.loadTitles();
   }
 
   onPageChange(event: PageChangeEvent): void {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
     this.loadTitles();
-  }
-
-  onAdd(): void {
-    this.router.navigate(['/maintenance/title/add']);
-  }
-
-  onEdit(title: Title): void {
-    this.router.navigate(['/maintenance/title/edit', title.id]);
-  }
-
-  onDelete(title: Title): void {
-    if (confirm(`Are you sure you want to delete "${title.name}"?`)) {
-      this.titleService.deleteTitle(title.id).subscribe({
-        next: () => {
-          // If current page becomes empty and it's not the first page, go to previous page
-          if (this.filteredTitles.length === 1 && this.currentPage > 0) {
-            this.currentPage--;
-          }
-          this.loadTitles();
-        },
-        error: () => {
-          this.error = 'Failed to delete title';
-          this.loadTitles();
-          setTimeout(() => {
-            this.error = '';
-          }, 3000);
-        }
-      });
-    }
   }
 }
