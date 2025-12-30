@@ -4,6 +4,6 @@ export interface Title {
 }
 
 export interface TitleViewModel {
-  titleModel: Title[];
+  functionalTitleModel: Title[];
   totalCount: number;
 }
